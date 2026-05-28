@@ -1,0 +1,126 @@
+[{
+  "_id": {
+    "$oid": "69ee83f32618ffda24308183"
+  },
+  "userId": 1,
+  "actions": [
+    {
+      "type": "login",
+      "date": {
+        "$date": "2026-04-26T21:30:27.903Z"
+      }
+    },
+    {
+      "type": "purchase",
+      "orderId": 101,
+      "date": {
+        "$date": "2026-04-26T21:30:27.903Z"
+      }
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "69eea1502618ffda2430818d"
+  },
+  "userId": 2,
+  "actions": [
+    {
+      "type": "login",
+      "date": {
+        "$date": "2026-04-26T23:35:44.837Z"
+      }
+    },
+    {
+      "type": "view",
+      "productId": 3,
+      "date": {
+        "$date": "2026-04-26T23:35:44.837Z"
+      }
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "69eea1502618ffda2430818e"
+  },
+  "userId": 3,
+  "actions": [
+    {
+      "type": "login",
+      "date": {
+        "$date": "2026-04-26T23:35:44.837Z"
+      }
+    },
+    {
+      "type": "purchase",
+      "orderId": 4,
+      "date": {
+        "$date": "2026-04-26T23:35:44.837Z"
+      }
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "69eea1502618ffda2430818f"
+  },
+  "userId": 4,
+  "actions": [
+    {
+      "type": "logout",
+      "date": {
+        "$date": "2026-04-26T23:35:44.837Z"
+      }
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "69eea1502618ffda24308190"
+  },
+  "userId": 5,
+  "actions": [
+    {
+      "type": "view",
+      "productId": 2,
+      "date": {
+        "$date": "2026-04-26T23:35:44.837Z"
+      }
+    },
+    {
+      "type": "view",
+      "productId": 6,
+      "date": {
+        "$date": "2026-04-26T23:35:44.837Z"
+      }
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "69eea1502618ffda24308191"
+  },
+  "userId": 6,
+  "actions": [
+    {
+      "type": "login",
+      "date": {
+        "$date": "2026-04-26T23:35:44.837Z"
+      }
+    },
+    {
+      "type": "purchase",
+      "orderId": 6,
+      "date": {
+        "$date": "2026-04-26T23:35:44.837Z"
+      }
+    },
+    {
+      "type": "logout",
+      "date": {
+        "$date": "2026-04-26T23:35:44.837Z"
+      }
+    }
+  ]
+}]

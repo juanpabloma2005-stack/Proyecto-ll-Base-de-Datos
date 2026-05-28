@@ -1,0 +1,275 @@
+--Consultas comlejas
+-- ============================================
+-- Consulta 1:
+-- Objetivo: Obtener los productos más vendidos por categoría
+-- Tablas: order_details, products, categories
+-- Tipo: JOIN + GROUP BY + HAVING
+SELECT c.name AS categoria, p.name AS producto, SUM(od.quantity) AS total_vendido
+FROM order_details od
+JOIN products p ON od.product_id = p.product_id
+JOIN categories c ON p.category_id = c.category_id
+GROUP BY c.name, p.name
+HAVING SUM(od.quantity) > 4
+ORDER BY total_vendido DESC;
+
+-- ============================================
+-- Consulta 2:
+-- Objetivo: Obtener los clientes que más dinero han gastado
+-- Tablas: users, orders
+-- Tipo: JOIN + agregación
+SELECT u.name, SUM(o.total) AS total_gastado
+FROM users u
+JOIN orders o ON u.user_id = o.user_id
+GROUP BY u.name
+ORDER BY total_gastado DESC;
+
+-- ============================================
+-- Consulta 3:
+-- Objetivo: Identificar productos que nunca se han vendido
+-- Tablas: products, order_details
+-- Tipo: Subconsulta
+SELECT name
+FROM products
+WHERE product_id NOT IN (
+    SELECT product_id FROM order_details
+);
+
+-- ============================================
+-- Consulta 4:
+-- Objetivo: Obtener el promedio de calificaciones por producto
+-- Tablas: products, reviews
+-- Tipo: JOIN + agregación
+SELECT p.name, AVG(r.rating) AS promedio
+FROM products p
+JOIN reviews r ON p.product_id = r.product_id
+GROUP BY p.name;
+
+-- ============================================
+-- Consulta 5:
+-- Objetivo: Órdenes con más de 3 productos distintos
+-- Tablas: orders, order_details
+-- Tipo: GROUP BY + HAVING
+SELECT o.order_id, COUNT(DISTINCT od.product_id) AS cantidad_productos
+FROM orders o
+JOIN order_details od ON o.order_id = od.order_id
+GROUP BY o.order_id
+HAVING COUNT(DISTINCT od.product_id) > 3;
+
+--CONSULTAS DE NEGOCIO
+-- ============================================
+-- Consulta 6:
+-- Objetivo: Detectar clientes que nunca han comprado
+-- Tablas: users, orders
+-- Tipo: LEFT JOIN
+SELECT u.name
+FROM users u
+LEFT JOIN orders o ON u.user_id = o.user_id
+WHERE o.order_id IS NULL;
+
+-- ============================================
+-- Consulta 7:
+-- Objetivo: Obtener los productos más vendidos por categoría en el último mes
+-- Tablas: products, categories, orders, order_details
+-- Tipo: JOIN + agregación + filtro temporal
+SELECT c.name AS categoria, p.name AS producto, SUM(od.quantity) AS total_vendido
+FROM order_details od
+JOIN products p ON od.product_id = p.product_id
+JOIN categories c ON p.category_id = c.category_id
+JOIN orders o ON od.order_id = o.order_id
+WHERE o.created_at >= CURRENT_DATE - INTERVAL '1 month'
+GROUP BY c.name, p.name
+ORDER BY total_vendido DESC;
+
+-- ============================================
+-- Consulta 8:
+-- Objetivo: Identificar productos con bajo inventario
+-- Tablas: products
+-- Tipo: Filtro
+SELECT name, stock
+FROM products
+WHERE stock < 5;
+
+-- ============================================
+-- Consulta 9:
+-- Objetivo: Clientes con más de 5 compras realizadas
+-- Tablas: users, orders
+-- Tipo: JOIN + GROUP BY + HAVING
+SELECT u.name, COUNT(o.order_id) AS total_compras
+FROM users u
+JOIN orders o ON u.user_id = o.user_id
+GROUP BY u.name
+HAVING COUNT(o.order_id) > 5;
+
+-- ============================================
+-- Consulta 10:
+-- Objetivo: Método de pago más utilizado
+-- Tablas: payments
+-- Tipo: GROUP BY
+SELECT method, COUNT(*) AS total_uso
+FROM payments
+GROUP BY method
+ORDER BY total_uso DESC;
+
+--Consultas Adicionales
+-- ============================================
+-- Consulta 11:
+-- Objetivo: Total de ventas por mes
+-- Tablas: orders
+-- Tipo: agregación
+SELECT DATE_TRUNC('month', created_at) AS mes, SUM(total) AS total_ventas
+FROM orders
+GROUP BY mes
+ORDER BY mes;
+
+-- ============================================
+-- Consulta 12:
+-- Objetivo: Productos más caros por categoría
+-- Tablas: products, categories
+-- Tipo: JOIN + subconsulta
+SELECT c.name, p.name, p.price
+FROM products p
+JOIN categories c ON p.category_id = c.category_id
+WHERE p.price = (
+    SELECT MAX(price)
+    FROM products
+    WHERE category_id = p.category_id
+);
+
+-- ============================================
+-- Consulta 13:
+-- Objetivo: Promedio de gasto por cliente
+-- Tablas: users, orders
+-- Tipo: agregación
+SELECT u.name, AVG(o.total) AS gasto_promedio
+FROM users u
+JOIN orders o ON u.user_id = o.user_id
+GROUP BY u.name;
+
+-- ============================================
+-- Consulta 14:
+-- Objetivo: Órdenes con envío pendiente
+-- Tablas: orders, shipments
+-- Tipo: JOIN + filtro
+SELECT o.order_id, s.status
+FROM orders o
+JOIN shipments s ON o.order_id = s.order_id
+WHERE s.status = 'pendiente';
+
+-- ============================================
+-- Consulta 15:
+-- Objetivo: Productos más vendidos en general
+-- Tablas: order_details, products
+-- Tipo: agregación
+SELECT p.name, SUM(od.quantity) AS total_vendido
+FROM order_details od
+JOIN products p ON od.product_id = p.product_id
+GROUP BY p.name
+ORDER BY total_vendido DESC
+LIMIT 10;
+
+-- ============================================
+-- Consulta 16:
+-- Objetivo: Obtener el total de productos vendidos por usuario
+-- Tablas: users, orders, order_details
+-- Tipo: JOIN + agregación
+SELECT u.name, SUM(od.quantity) AS productos_comprados
+FROM users u
+JOIN orders o ON u.user_id = o.user_id
+JOIN order_details od ON o.order_id = od.order_id
+GROUP BY u.name;
+
+-- ============================================
+-- Consulta 17:
+-- Objetivo: Ingreso total generado por cada categoría
+-- Tablas: categories, products, order_details
+-- Tipo: JOIN + agregación
+SELECT c.name, SUM(od.quantity * od.price) AS ingresos
+FROM categories c
+JOIN products p ON c.category_id = p.category_id
+JOIN order_details od ON p.product_id = od.product_id
+GROUP BY c.name
+ORDER BY ingresos DESC;
+
+-- ============================================
+-- Consulta 18:
+-- Objetivo: Productos más vendidos en el último año
+-- Tablas: products, order_details, orders
+-- Tipo: JOIN + filtro temporal
+SELECT p.name, SUM(od.quantity) AS total_vendido
+FROM products p
+JOIN order_details od ON p.product_id = od.product_id
+JOIN orders o ON od.order_id = o.order_id
+WHERE o.created_at >= CURRENT_DATE - INTERVAL '1 year'
+GROUP BY p.name
+ORDER BY total_vendido DESC;
+
+-- ============================================
+-- Consulta 19:
+-- Objetivo: Órdenes sin pago registrado
+-- Tablas: orders, payments
+-- Tipo: LEFT JOIN
+SELECT o.order_id
+FROM orders o
+LEFT JOIN payments p ON o.order_id = p.order_id
+WHERE p.payment_id IS NULL;
+
+-- ============================================
+-- Consulta 20:
+-- Objetivo: Usuarios que han hecho compras recientes (últimos 7 días)
+-- Tablas: users, orders
+-- Tipo: filtro temporal
+SELECT DISTINCT u.name
+FROM users u
+JOIN orders o ON u.user_id = o.user_id
+WHERE o.created_at >= CURRENT_DATE - INTERVAL '7 days';
+
+-- ============================================
+-- Consulta 21:
+-- Objetivo: Cantidad de productos por proveedor
+-- Tablas: suppliers, product_suppliers
+-- Tipo: agregación
+SELECT s.name, COUNT(ps.product_id) AS total_productos
+FROM suppliers s
+JOIN product_suppliers ps ON s.supplier_id = ps.supplier_id
+GROUP BY s.name;
+
+-- ============================================
+-- Consulta 22:
+-- Objetivo: Promedio de productos por orden
+-- Tablas: order_details
+-- Tipo: agregación
+SELECT AVG(cantidad) AS promedio_productos
+FROM (
+    SELECT order_id, SUM(quantity) AS cantidad
+    FROM order_details
+    GROUP BY order_id
+) sub;
+
+-- ============================================
+-- Consulta 23:
+-- Objetivo: Órdenes con total superior al promedio general
+-- Tablas: orders
+-- Tipo: subconsulta
+SELECT order_id, total
+FROM orders
+WHERE total > (SELECT AVG(total) FROM orders);
+
+-- ============================================
+-- Consulta 24:
+-- Objetivo: Productos que tienen reseñas negativas (rating <= 2)
+-- Tablas: products, reviews
+-- Tipo: JOIN + filtro
+SELECT DISTINCT p.name
+FROM products p
+JOIN reviews r ON p.product_id = r.product_id
+WHERE r.rating <= 2;
+
+-- ============================================
+-- Consulta 25:
+-- Objetivo: Clientes que han usado cupones
+-- Tablas: users, orders, order_coupons
+-- Tipo: JOIN
+SELECT DISTINCT u.name
+FROM users u
+JOIN orders o ON u.user_id = o.user_id
+JOIN order_coupons oc ON o.order_id = oc.order_id;

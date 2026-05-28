@@ -1,0 +1,77 @@
+[{
+  "_id": {
+    "$oid": "69ee83f32618ffda24308184"
+  },
+  "productId": 1,
+  "userId": 1,
+  "viewedAt": {
+    "$date": "2026-04-26T21:30:27.920Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69ee83f32618ffda24308185"
+  },
+  "productId": 2,
+  "userId": 2,
+  "viewedAt": {
+    "$date": "2026-04-26T21:30:27.920Z"
+  }
+},
+{
+  "_id": {
+    "$oid": "69eea1482618ffda24308188"
+  },
+  "productId": 2,
+  "userId": 5,
+  "viewedAt": {
+    "$date": "2026-04-26T23:35:36.855Z"
+  },
+  "device": "mobile"
+},
+{
+  "_id": {
+    "$oid": "69eea1482618ffda24308189"
+  },
+  "productId": 3,
+  "userId": 1,
+  "viewedAt": {
+    "$date": "2026-04-26T23:35:36.855Z"
+  },
+  "device": "desktop"
+},
+{
+  "_id": {
+    "$oid": "69eea1482618ffda2430818a"
+  },
+  "productId": 4,
+  "userId": 7,
+  "viewedAt": {
+    "$date": "2026-04-26T23:35:36.855Z"
+  },
+  "location": "Costa Rica"
+},
+{
+  "_id": {
+    "$oid": "69eea1482618ffda2430818b"
+  },
+  "productId": 5,
+  "userId": 2,
+  "viewedAt": {
+    "$date": "2026-04-26T23:35:36.855Z"
+  },
+  "device": "tablet",
+  "duration": 45
+},
+{
+  "_id": {
+    "$oid": "69eea1482618ffda2430818c"
+  },
+  "productId": 6,
+  "userId": 9,
+  "viewedAt": {
+    "$date": "2026-04-26T23:35:36.855Z"
+  },
+  "device": "mobile",
+  "duration": 30
+}]

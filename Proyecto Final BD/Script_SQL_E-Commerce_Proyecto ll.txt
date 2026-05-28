@@ -1,0 +1,564 @@
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE addresses (
+    address_id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(user_id),
+    address TEXT NOT NULL,
+    city VARCHAR(50),
+    country VARCHAR(50)
+);
+
+CREATE TABLE categories (
+    category_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE products (
+    product_id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    price DECIMAL(10,2),
+    stock INT,
+    category_id INT REFERENCES categories(category_id)
+);
+
+CREATE TABLE suppliers (
+    supplier_id SERIAL PRIMARY KEY,
+    name VARCHAR(100)
+);
+
+CREATE TABLE product_suppliers (
+    product_id INT REFERENCES products(product_id),
+    supplier_id INT REFERENCES suppliers(supplier_id),
+    PRIMARY KEY(product_id, supplier_id)
+);
+
+CREATE TABLE orders (
+    order_id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(user_id),
+    total DECIMAL(10,2),
+    status VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE order_details (
+    order_detail_id SERIAL PRIMARY KEY,
+    order_id INT REFERENCES orders(order_id),
+    product_id INT REFERENCES products(product_id),
+    quantity INT,
+    price DECIMAL(10,2)
+);
+
+CREATE TABLE payments (
+    payment_id SERIAL PRIMARY KEY,
+    order_id INT REFERENCES orders(order_id),
+    method VARCHAR(50),
+    amount DECIMAL(10,2),
+    status VARCHAR(50)
+);
+
+CREATE TABLE shipments (
+    shipment_id SERIAL PRIMARY KEY,
+    order_id INT REFERENCES orders(order_id),
+    address_id INT REFERENCES addresses(address_id),
+    status VARCHAR(50),
+    shipped_date DATE
+);
+
+CREATE TABLE reviews (
+    review_id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(user_id),
+    product_id INT REFERENCES products(product_id),
+    rating INT,
+    comment TEXT
+);
+
+CREATE TABLE carts (
+    cart_id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(user_id)
+);
+
+CREATE TABLE cart_items (
+    cart_item_id SERIAL PRIMARY KEY,
+    cart_id INT REFERENCES carts(cart_id),
+    product_id INT REFERENCES products(product_id),
+    quantity INT
+);
+
+CREATE TABLE coupons (
+    coupon_id SERIAL PRIMARY KEY,
+    code VARCHAR(50),
+    discount DECIMAL(5,2)
+);
+
+CREATE TABLE order_coupons (
+    order_id INT REFERENCES orders(order_id),
+    coupon_id INT REFERENCES coupons(coupon_id),
+    PRIMARY KEY(order_id, coupon_id)
+);
+
+--Insert Users
+INSERT INTO users (name, email, password) VALUES
+('Juan Perez','juan@gmail.com','123'),
+('Maria Lopez','maria@gmail.com','123'),
+('Carlos Ruiz','carlos@gmail.com','123'),
+('Ana Torres','ana@gmail.com','123'),
+('Luis Gomez','luis@gmail.com','123'),
+('Sofia Castro','sofia@gmail.com','123'),
+('Pedro Vargas','pedro@gmail.com','123'),
+('Laura Mora','laura@gmail.com','123'),
+('Diego Rojas','diego@gmail.com','123'),
+('Valeria Soto','valeria@gmail.com','123');
+
+--Insert Addresses
+INSERT INTO addresses (user_id, address, city, country) VALUES
+(1,'Casa 1','San Jose','Costa Rica'),
+(2,'Casa 2','Alajuela','Costa Rica'),
+(3,'Casa 3','Cartago','Costa Rica'),
+(4,'Casa 4','Heredia','Costa Rica'),
+(5,'Casa 5','Puntarenas','Costa Rica'),
+(6,'Casa 6','Limon','Costa Rica'),
+(7,'Casa 7','San Jose','Costa Rica'),
+(8,'Casa 8','Alajuela','Costa Rica'),
+(9,'Casa 9','Cartago','Costa Rica'),
+(10,'Casa 10','Heredia','Costa Rica');
+
+--Insert Categories
+INSERT INTO categories (name) VALUES
+('Electronics'),
+('Clothing'),
+('Home'),
+('Sports'),
+('Books'),
+('Toys'),
+('Beauty'),
+('Automotive'),
+('Food'),
+('Gaming');
+
+--Insert Products
+INSERT INTO products (name, price, stock, category_id) VALUES
+('Laptop',1200,10,1),
+('Camisa',25,50,2),
+('Sofa',500,5,3),
+('Balon',20,30,4),
+('Libro SQL',15,40,5),
+('Muñeca',18,25,6),
+('Perfume',60,15,7),
+('Aceite',35,20,8),
+('Pizza',10,100,9),
+('PS5',700,8,10);
+
+--Inser Suppliers
+INSERT INTO suppliers (name) VALUES
+('Proveedor A'),
+('Proveedor B'),
+('Proveedor C'),
+('Proveedor D'),
+('Proveedor E'),
+('Proveedor F'),
+('Proveedor G'),
+('Proveedor H'),
+('Proveedor I'),
+('Proveedor J');
+
+--Insert Product_Suppliers
+INSERT INTO product_suppliers (product_id, supplier_id) VALUES
+(1,1),(2,2),(3,3),(4,4),(5,5),
+(6,6),(7,7),(8,8),(9,9),(10,10);
+
+--Insert Orders
+INSERT INTO orders (user_id, total, status) VALUES
+(1,200,'completado'),
+(2,150,'completado'),
+(3,300,'pendiente'),
+(4,450,'completado'),
+(5,120,'cancelado'),
+(6,600,'completado'),
+(7,220,'pendiente'),
+(8,180,'completado'),
+(9,90,'completado'),
+(10,750,'completado');
+
+--Insert Orders_Details 
+INSERT INTO order_details (order_id, product_id, quantity, price) VALUES
+(1,1,1,1200),
+(1,2,2,25),
+(2,3,1,500),
+(3,4,3,20),
+(4,5,2,15),
+(5,6,1,18),
+(6,7,2,60),
+(7,8,1,35),
+(8,9,5,10),
+(9,10,1,700);
+
+--Inset Payments
+INSERT INTO payments (order_id, method, amount, status) VALUES
+(1,'Tarjeta',200,'pagado'),
+(2,'Paypal',150,'pagado'),
+(3,'Tarjeta',300,'pendiente'),
+(4,'Efectivo',450,'pagado'),
+(5,'Tarjeta',120,'cancelado'),
+(6,'Paypal',600,'pagado'),
+(7,'Efectivo',220,'pendiente'),
+(8,'Tarjeta',180,'pagado'),
+(9,'Paypal',90,'pagado'),
+(10,'Tarjeta',750,'pagado');
+
+--Insert Shipments
+INSERT INTO shipments (order_id, address_id, status, shipped_date) VALUES
+(1,1,'enviado','2025-01-10'),
+(2,2,'enviado','2025-01-11'),
+(3,3,'pendiente',NULL),
+(4,4,'enviado','2025-01-12'),
+(5,5,'cancelado',NULL),
+(6,6,'enviado','2025-01-13'),
+(7,7,'pendiente',NULL),
+(8,8,'enviado','2025-01-14'),
+(9,9,'enviado','2025-01-15'),
+(10,10,'enviado','2025-01-16');
+
+--Insert Reviews
+INSERT INTO reviews (user_id, product_id, rating, comment) VALUES
+(1,1,5,'Excelente'),
+(2,2,4,'Bueno'),
+(3,3,2,'Regular'),
+(4,4,1,'Malo'),
+(5,5,5,'Perfecto'),
+(6,6,3,'Normal'),
+(7,7,4,'Bueno'),
+(8,8,2,'Regular'),
+(9,9,5,'Excelente'),
+(10,10,1,'Terrible');
+
+--Insert carts
+INSERT INTO carts (user_id) VALUES
+(1),(2),(3),(4),(5),(6),(7),(8),(9),(10);
+
+--Insert Cart_Items
+INSERT INTO cart_items (cart_id, product_id, quantity) VALUES
+(1,1,1),
+(2,2,2),
+(3,3,1),
+(4,4,3),
+(5,5,2),
+(6,6,1),
+(7,7,2),
+(8,8,1),
+(9,9,5),
+(10,10,1);
+
+--Insert Coupons
+INSERT INTO coupons (code, discount) VALUES
+('DESC10',10),
+('DESC20',20),
+('DESC30',30),
+('DESC40',40),
+('DESC50',50),
+('PROMO5',5),
+('PROMO15',15),
+('PROMO25',25),
+('PROMO35',35),
+('PROMO45',45);
+
+--Insert Orden_Coupons
+INSERT INTO order_coupons (order_id, coupon_id) VALUES
+(1,1),
+(2,2),
+(3,3),
+(4,4),
+(5,5),
+(6,6),
+(7,7),
+(8,8),
+(9,9),
+(10,10);
+
+
+-- ÍNDICES
+CREATE INDEX idx_user_email ON users(email);
+CREATE INDEX idx_product_category ON products(category_id);
+CREATE INDEX idx_order_user ON orders(user_id);
+
+
+--Consultas comlejas
+-- ============================================
+-- Consulta 1:
+-- Objetivo: Obtener los productos más vendidos por categoría
+-- Tablas: order_details, products, categories
+-- Tipo: JOIN + GROUP BY + HAVING
+SELECT c.name AS categoria, p.name AS producto, SUM(od.quantity) AS total_vendido
+FROM order_details od
+JOIN products p ON od.product_id = p.product_id
+JOIN categories c ON p.category_id = c.category_id
+GROUP BY c.name, p.name
+HAVING SUM(od.quantity) > 4
+ORDER BY total_vendido DESC;
+
+-- ============================================
+-- Consulta 2:
+-- Objetivo: Obtener los clientes que más dinero han gastado
+-- Tablas: users, orders
+-- Tipo: JOIN + agregación
+SELECT u.name, SUM(o.total) AS total_gastado
+FROM users u
+JOIN orders o ON u.user_id = o.user_id
+GROUP BY u.name
+ORDER BY total_gastado DESC;
+
+-- ============================================
+-- Consulta 3:
+-- Objetivo: Identificar productos que nunca se han vendido
+-- Tablas: products, order_details
+-- Tipo: Subconsulta
+SELECT name
+FROM products
+WHERE product_id NOT IN (
+    SELECT product_id FROM order_details
+);
+
+-- ============================================
+-- Consulta 4:
+-- Objetivo: Obtener el promedio de calificaciones por producto
+-- Tablas: products, reviews
+-- Tipo: JOIN + agregación
+SELECT p.name, AVG(r.rating) AS promedio
+FROM products p
+JOIN reviews r ON p.product_id = r.product_id
+GROUP BY p.name;
+
+-- ============================================
+-- Consulta 5:
+-- Objetivo: Órdenes con más de 3 productos distintos
+-- Tablas: orders, order_details
+-- Tipo: GROUP BY + HAVING
+SELECT o.order_id, COUNT(DISTINCT od.product_id) AS cantidad_productos
+FROM orders o
+JOIN order_details od ON o.order_id = od.order_id
+GROUP BY o.order_id
+HAVING COUNT(DISTINCT od.product_id) > 3;
+
+--CONSULTAS DE NEGOCIO
+-- ============================================
+-- Consulta 6:
+-- Objetivo: Detectar clientes que nunca han comprado
+-- Tablas: users, orders
+-- Tipo: LEFT JOIN
+SELECT u.name
+FROM users u
+LEFT JOIN orders o ON u.user_id = o.user_id
+WHERE o.order_id IS NULL;
+
+-- ============================================
+-- Consulta 7:
+-- Objetivo: Obtener los productos más vendidos por categoría en el último mes
+-- Tablas: products, categories, orders, order_details
+-- Tipo: JOIN + agregación + filtro temporal
+SELECT c.name AS categoria, p.name AS producto, SUM(od.quantity) AS total_vendido
+FROM order_details od
+JOIN products p ON od.product_id = p.product_id
+JOIN categories c ON p.category_id = c.category_id
+JOIN orders o ON od.order_id = o.order_id
+WHERE o.created_at >= CURRENT_DATE - INTERVAL '1 month'
+GROUP BY c.name, p.name
+ORDER BY total_vendido DESC;
+
+-- ============================================
+-- Consulta 8:
+-- Objetivo: Identificar productos con bajo inventario
+-- Tablas: products
+-- Tipo: Filtro
+SELECT name, stock
+FROM products
+WHERE stock < 5;
+
+-- ============================================
+-- Consulta 9:
+-- Objetivo: Clientes con más de 5 compras realizadas
+-- Tablas: users, orders
+-- Tipo: JOIN + GROUP BY + HAVING
+SELECT u.name, COUNT(o.order_id) AS total_compras
+FROM users u
+JOIN orders o ON u.user_id = o.user_id
+GROUP BY u.name
+HAVING COUNT(o.order_id) > 5;
+
+-- ============================================
+-- Consulta 10:
+-- Objetivo: Método de pago más utilizado
+-- Tablas: payments
+-- Tipo: GROUP BY
+SELECT method, COUNT(*) AS total_uso
+FROM payments
+GROUP BY method
+ORDER BY total_uso DESC;
+
+--Consultas Adicionales
+-- ============================================
+-- Consulta 11:
+-- Objetivo: Total de ventas por mes
+-- Tablas: orders
+-- Tipo: agregación
+SELECT DATE_TRUNC('month', created_at) AS mes, SUM(total) AS total_ventas
+FROM orders
+GROUP BY mes
+ORDER BY mes;
+
+-- ============================================
+-- Consulta 12:
+-- Objetivo: Productos más caros por categoría
+-- Tablas: products, categories
+-- Tipo: JOIN + subconsulta
+SELECT c.name, p.name, p.price
+FROM products p
+JOIN categories c ON p.category_id = c.category_id
+WHERE p.price = (
+    SELECT MAX(price)
+    FROM products
+    WHERE category_id = p.category_id
+);
+
+-- ============================================
+-- Consulta 13:
+-- Objetivo: Promedio de gasto por cliente
+-- Tablas: users, orders
+-- Tipo: agregación
+SELECT u.name, AVG(o.total) AS gasto_promedio
+FROM users u
+JOIN orders o ON u.user_id = o.user_id
+GROUP BY u.name;
+
+-- ============================================
+-- Consulta 14:
+-- Objetivo: Órdenes con envío pendiente
+-- Tablas: orders, shipments
+-- Tipo: JOIN + filtro
+SELECT o.order_id, s.status
+FROM orders o
+JOIN shipments s ON o.order_id = s.order_id
+WHERE s.status = 'pendiente';
+
+-- ============================================
+-- Consulta 15:
+-- Objetivo: Productos más vendidos en general
+-- Tablas: order_details, products
+-- Tipo: agregación
+SELECT p.name, SUM(od.quantity) AS total_vendido
+FROM order_details od
+JOIN products p ON od.product_id = p.product_id
+GROUP BY p.name
+ORDER BY total_vendido DESC
+LIMIT 10;
+
+-- ============================================
+-- Consulta 16:
+-- Objetivo: Obtener el total de productos vendidos por usuario
+-- Tablas: users, orders, order_details
+-- Tipo: JOIN + agregación
+SELECT u.name, SUM(od.quantity) AS productos_comprados
+FROM users u
+JOIN orders o ON u.user_id = o.user_id
+JOIN order_details od ON o.order_id = od.order_id
+GROUP BY u.name;
+
+-- ============================================
+-- Consulta 17:
+-- Objetivo: Ingreso total generado por cada categoría
+-- Tablas: categories, products, order_details
+-- Tipo: JOIN + agregación
+SELECT c.name, SUM(od.quantity * od.price) AS ingresos
+FROM categories c
+JOIN products p ON c.category_id = p.category_id
+JOIN order_details od ON p.product_id = od.product_id
+GROUP BY c.name
+ORDER BY ingresos DESC;
+
+-- ============================================
+-- Consulta 18:
+-- Objetivo: Productos más vendidos en el último año
+-- Tablas: products, order_details, orders
+-- Tipo: JOIN + filtro temporal
+SELECT p.name, SUM(od.quantity) AS total_vendido
+FROM products p
+JOIN order_details od ON p.product_id = od.product_id
+JOIN orders o ON od.order_id = o.order_id
+WHERE o.created_at >= CURRENT_DATE - INTERVAL '1 year'
+GROUP BY p.name
+ORDER BY total_vendido DESC;
+
+-- ============================================
+-- Consulta 19:
+-- Objetivo: Órdenes sin pago registrado
+-- Tablas: orders, payments
+-- Tipo: LEFT JOIN
+SELECT o.order_id
+FROM orders o
+LEFT JOIN payments p ON o.order_id = p.order_id
+WHERE p.payment_id IS NULL;
+
+-- ============================================
+-- Consulta 20:
+-- Objetivo: Usuarios que han hecho compras recientes (últimos 7 días)
+-- Tablas: users, orders
+-- Tipo: filtro temporal
+SELECT DISTINCT u.name
+FROM users u
+JOIN orders o ON u.user_id = o.user_id
+WHERE o.created_at >= CURRENT_DATE - INTERVAL '7 days';
+
+-- ============================================
+-- Consulta 21:
+-- Objetivo: Cantidad de productos por proveedor
+-- Tablas: suppliers, product_suppliers
+-- Tipo: agregación
+SELECT s.name, COUNT(ps.product_id) AS total_productos
+FROM suppliers s
+JOIN product_suppliers ps ON s.supplier_id = ps.supplier_id
+GROUP BY s.name;
+
+-- ============================================
+-- Consulta 22:
+-- Objetivo: Promedio de productos por orden
+-- Tablas: order_details
+-- Tipo: agregación
+SELECT AVG(cantidad) AS promedio_productos
+FROM (
+    SELECT order_id, SUM(quantity) AS cantidad
+    FROM order_details
+    GROUP BY order_id
+) sub;
+
+-- ============================================
+-- Consulta 23:
+-- Objetivo: Órdenes con total superior al promedio general
+-- Tablas: orders
+-- Tipo: subconsulta
+SELECT order_id, total
+FROM orders
+WHERE total > (SELECT AVG(total) FROM orders);
+
+-- ============================================
+-- Consulta 24:
+-- Objetivo: Productos que tienen reseñas negativas (rating <= 2)
+-- Tablas: products, reviews
+-- Tipo: JOIN + filtro
+SELECT DISTINCT p.name
+FROM products p
+JOIN reviews r ON p.product_id = r.product_id
+WHERE r.rating <= 2;
+
+-- ============================================
+-- Consulta 25:
+-- Objetivo: Clientes que han usado cupones
+-- Tablas: users, orders, order_coupons
+-- Tipo: JOIN
+SELECT DISTINCT u.name
+FROM users u
+JOIN orders o ON u.user_id = o.user_id
+JOIN order_coupons oc ON o.order_id = oc.order_id;

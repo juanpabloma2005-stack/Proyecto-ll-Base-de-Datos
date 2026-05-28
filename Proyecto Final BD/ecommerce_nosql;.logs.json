@@ -1,0 +1,10 @@
+[{
+  "_id": {
+    "$oid": "69ee83f32618ffda24308186"
+  },
+  "level": "ERROR",
+  "message": "Error en pago",
+  "timestamp": {
+    "$date": "2026-04-26T21:30:27.936Z"
+  }
+}]
